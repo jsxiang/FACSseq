@@ -1,6 +1,6 @@
 addpath ~/Documents/robot/Matlab-Utilities/
 addpath ~/Documents/MATLAB/FACS
-addpath ~/Documents/MATLAB/FACSseq/
+addpath ~/Documents/FACSseq/
 clear 
 c=load('common.mat');
 common=c.common;
