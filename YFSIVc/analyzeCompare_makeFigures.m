@@ -4,7 +4,7 @@ addpath ~/Documents/FACSseq/
 clear 
 c=load('common.mat');
 common=c.common;
-numseqs=50;
+numseqs=5;
 
 for k=1:length(common)
 %     common(k).origbincounts(:,common(k).rep1ind)=common(k).origbincounts(:,common(k).rep1ind)+common(k).origbincounts(:,common(k).rep1ind+2);
@@ -431,45 +431,141 @@ title('yeast')
 legendlabels={sprintf('all data n>%0.0f',numseqs),'switches','common to both','only in other'};
 fprintf('%s\n',legendlabels{:})
 
-seqsonlyyeast={};
-seqsonlymamm={};
-seqsinboth={};
 
-for i=1:length(gooddata(k).mamm.seqs)
+switchesinboth.seqs={};
+switchesinboth.mamm.muminus=[];
+switchesinboth.mamm.semminus=[];
+switchesinboth.mamm.muplus=[];
+switchesinboth.mamm.semplus=[];
+switchesinboth.mamm.fold=[];
+switchesinboth.yeast.muminus=[];
+switchesinboth.yeast.semminus=[];
+switchesinboth.yeast.muplus=[];
+switchesinboth.yeast.semplus=[];
+switchesinboth.yeast.fold=[];
+switchesonlymamm=switchesinboth;
+switchesonlyyeast=switchesinboth;
+
+for i=1:length(gooddata(k).mamm.seqs) % for loop mostly because of cell array
     if commindboth(i)==1
-        seqsinboth{end+1}=gooddata(k).mamm.seqs{i};
+        switchesinboth.seqs{end+1}=gooddata(k).mamm.seqs{i};
+        switchesinboth.mamm.muminus(end+1)=gooddata(k).mamm.muminus(i);
+        switchesinboth.mamm.semminus(end+1)=gooddata(k).mamm.semminus(i);
+        switchesinboth.mamm.muplus(end+1)=gooddata(k).mamm.muplus(i);
+        switchesinboth.mamm.semplus(end+1)=gooddata(k).mamm.semplus(i);
+        switchesinboth.mamm.fold(end+1)=gooddata(k).mamm.fold(i);
+        switchesinboth.yeast.muminus(end+1)=gooddata(k).yeast.muminus(i);
+        switchesinboth.yeast.semminus(end+1)=gooddata(k).yeast.semminus(i);
+        switchesinboth.yeast.muplus(end+1)=gooddata(k).yeast.muplus(i);
+        switchesinboth.yeast.semplus(end+1)=gooddata(k).yeast.semplus(i);
+        switchesinboth.yeast.fold(end+1)=gooddata(k).yeast.fold(i);
     elseif onlyyeast(i)==1
-        seqsonlyyeast{end+1}=gooddata(k).mamm.seqs{i};
+        switchesonlyyeast.seqs{end+1}=gooddata(k).mamm.seqs{i};
+        switchesonlyyeast.mamm.muminus(end+1)=gooddata(k).mamm.muminus(i);
+        switchesonlyyeast.mamm.semminus(end+1)=gooddata(k).mamm.semminus(i);
+        switchesonlyyeast.mamm.muplus(end+1)=gooddata(k).mamm.muplus(i);
+        switchesonlyyeast.mamm.semplus(end+1)=gooddata(k).mamm.semplus(i);
+        switchesonlyyeast.mamm.fold(end+1)=gooddata(k).mamm.fold(i);
+        switchesonlyyeast.yeast.muminus(end+1)=gooddata(k).yeast.muminus(i);
+        switchesonlyyeast.yeast.semminus(end+1)=gooddata(k).yeast.semminus(i);
+        switchesonlyyeast.yeast.muplus(end+1)=gooddata(k).yeast.muplus(i);
+        switchesonlyyeast.yeast.semplus(end+1)=gooddata(k).yeast.semplus(i);
+        switchesonlyyeast.yeast.fold(end+1)=gooddata(k).yeast.fold(i);
     elseif onlymamm(i)==1
-        seqsonlymamm{end+1}=gooddata(k).mamm.seqs{i};
+        switchesonlymamm.seqs{end+1}=gooddata(k).mamm.seqs{i};
+        switchesonlymamm.mamm.muminus(end+1)=gooddata(k).mamm.muminus(i);
+        switchesonlymamm.mamm.semminus(end+1)=gooddata(k).mamm.semminus(i);
+        switchesonlymamm.mamm.muplus(end+1)=gooddata(k).mamm.muplus(i);
+        switchesonlymamm.mamm.semplus(end+1)=gooddata(k).mamm.semplus(i);
+        switchesonlymamm.mamm.fold(end+1)=gooddata(k).mamm.fold(i);
+        switchesonlymamm.yeast.muminus(end+1)=gooddata(k).yeast.muminus(i);
+        switchesonlymamm.yeast.semminus(end+1)=gooddata(k).yeast.semminus(i);
+        switchesonlymamm.yeast.muplus(end+1)=gooddata(k).yeast.muplus(i);
+        switchesonlymamm.yeast.semplus(end+1)=gooddata(k).yeast.semplus(i);
+        switchesonlymamm.yeast.fold(end+1)=gooddata(k).yeast.fold(i);
     end
 end
 
 fprintf('common in both:\n')
-fprintf('%s\n',seqsinboth{:})
+fprintf('%s\n',switchesinboth.seqs{:})
 fprintf('switches in yeast only:\n')
-fprintf('%s\n',seqsonlyyeast{:})
+fprintf('%s\n',switchesonlyyeast.seqs{:})
 fprintf('switches in mammalian cells only:\n')
-fprintf('%s\n',seqsonlymamm{:})
+fprintf('%s\n',switchesonlymamm.seqs{:})
 
 outputfilename=sprintf('%s_bothswitches.fasta',lib{k});
 f=fopen(outputfilename,'w');
-for i=1:length(seqsinboth)
-    fprintf(f,'>seq\n%s\n',seqsinboth{i});
+for i=1:length(switchesinboth.seqs)
+    fprintf(f,'>seq\n%s\n',switchesinboth.seqs{i});
 end
 fclose(f);
 
 outputfilename=sprintf('%s_yeastonly.fasta',lib{k});
 f=fopen(outputfilename,'w');
-for i=1:length(seqsonlyyeast)
-    fprintf(f,'>seq\n%s\n',seqsonlyyeast{i});
+for i=1:length(switchesonlyyeast.seqs)
+    fprintf(f,'>seq\n%s\n',switchesonlyyeast.seqs{i});
 end
 fclose(f);
 
 outputfilename=sprintf('%s_mammonly.fasta',lib{k});
 f=fopen(outputfilename,'w');
-for i=1:length(seqsonlymamm)
-    fprintf(f,'>seq\n%s\n',seqsonlymamm{i});
+for i=1:length(switchesonlymamm.seqs)
+    fprintf(f,'>seq\n%s\n',switchesonlymamm.seqs{i});
+end
+fclose(f);
+
+outputfilename=sprintf('%s_allswitches.txt',lib{k});
+f=fopen(outputfilename,'w');
+fprintf(f,'%s hits both yeast and mamm\n',lib{k});
+fprintf(f,'m.mu-\tm.SEM-\tm.mu+\tm.SEM+\tm.fold\ty.mu-\ty.SEM-\ty.mu+\ty.SEM+\ty.fold\tsequence\n');
+for i=1:length(switchesinboth.seqs)
+    fprintf(f,'%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%s\n',...
+        switchesinboth.mamm.muminus(i),...
+        switchesinboth.mamm.semminus(i),...
+        switchesinboth.mamm.muplus(i),...
+        switchesinboth.mamm.semplus(i),...
+        switchesinboth.mamm.fold(i),...
+        switchesinboth.yeast.muminus(i),...
+        switchesinboth.yeast.semminus(i),...
+        switchesinboth.yeast.muplus(i),...
+        switchesinboth.yeast.semplus(i),...
+        switchesinboth.yeast.fold(i),...
+        switchesinboth.seqs{i});
+end
+
+
+fprintf(f,'%s hits yeast only\n',lib{k});
+fprintf(f,'m.mu-\tm.SEM-\tm.mu+\tm.SEM+\tm.fold\ty.mu-\ty.SEM-\ty.mu+\ty.SEM+\ty.fold\tsequence\n');
+for i=1:length(switchesonlyyeast.seqs)
+    fprintf(f,'%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%s\n',...
+        switchesonlyyeast.mamm.muminus(i),...
+        switchesonlyyeast.mamm.semminus(i),...
+        switchesonlyyeast.mamm.muplus(i),...
+        switchesonlyyeast.mamm.semplus(i),...
+        switchesonlyyeast.mamm.fold(i),...
+        switchesonlyyeast.yeast.muminus(i),...
+        switchesonlyyeast.yeast.semminus(i),...
+        switchesonlyyeast.yeast.muplus(i),...
+        switchesonlyyeast.yeast.semplus(i),...
+        switchesonlyyeast.yeast.fold(i),...
+        switchesonlyyeast.seqs{i});
+end
+
+fprintf(f,'%s hits mammalian only\n',lib{k});
+fprintf(f,'m.mu-\tm.SEM-\tm.mu+\tm.SEM+\tm.fold\ty.mu-\ty.SEM-\ty.mu+\ty.SEM+\ty.fold\tsequence\n');
+for i=1:length(switchesonlymamm.seqs)
+    fprintf(f,'%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%0.4f\t%s\n',...
+        switchesonlymamm.mamm.muminus(i),...
+        switchesonlymamm.mamm.semminus(i),...
+        switchesonlymamm.mamm.muplus(i),...
+        switchesonlymamm.mamm.semplus(i),...
+        switchesonlymamm.mamm.fold(i),...
+        switchesonlymamm.yeast.muminus(i),...
+        switchesonlymamm.yeast.semminus(i),...
+        switchesonlymamm.yeast.muplus(i),...
+        switchesonlymamm.yeast.semplus(i),...
+        switchesonlymamm.yeast.fold(i),...
+        switchesonlymamm.seqs{i});
 end
 fclose(f);
 
